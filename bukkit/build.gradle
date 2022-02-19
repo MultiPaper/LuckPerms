@@ -22,6 +22,8 @@ dependencies {
         exclude(module: 'bukkit')
     }
     compileOnly 'lilypad.client.connect:api:0.0.1-SNAPSHOT'
+
+    implementation 'com.github.puregero:multilib:1.1.1'
 }
 
 shadowJar {
@@ -48,6 +50,7 @@ shadowJar {
     relocate 'com.rabbitmq', 'me.lucko.luckperms.lib.rabbitmq'
     relocate 'org.apache.commons.pool2', 'me.lucko.luckperms.lib.commonspool2'
     relocate 'ninja.leaping.configurate', 'me.lucko.luckperms.lib.configurate'
+    relocate 'com.github.puregero.multilib', 'me.lucko.luckperms.lib.multilib'
 }
 
 artifacts {

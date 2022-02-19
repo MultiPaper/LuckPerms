@@ -25,6 +25,7 @@
 
 package me.lucko.luckperms.bukkit.listeners;
 
+import com.github.puregero.multilib.MultiLib;
 import me.lucko.luckperms.bukkit.LPBukkitPlugin;
 import me.lucko.luckperms.bukkit.inject.permissible.LuckPermsPermissible;
 import me.lucko.luckperms.bukkit.inject.permissible.PermissibleInjector;
@@ -50,6 +51,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -78,6 +80,18 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
         } else {
             this.detectedCraftBukkitOfflineMode = false;
         }
+
+        MultiLib.onString(plugin.getBootstrap().getLoader(), "luckperms:prelogin", string -> {
+            String[] args = string.split(" ");
+            UUID uuid = UUID.fromString(args[0]);
+            String name = args[1];
+
+            CompletableFuture.runAsync(() -> {
+                User user = loadUser(uuid, name);
+                recordConnection(uuid);
+                this.plugin.getEventDispatcher().dispatchPlayerLoginProcess(uuid, name, user);
+            });
+        });
     }
 
     private void printCraftBukkitOfflineModeError() {
@@ -122,6 +136,7 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
            - creating a user instance in the UserManager for this connection.
            - setting up cached data. */
         try {
+            MultiLib.notify("luckperms:prelogin", e.getUniqueId() + " " + e.getName());
             User user = loadUser(e.getUniqueId(), e.getName());
             recordConnection(e.getUniqueId());
             this.plugin.getEventDispatcher().dispatchPlayerLoginProcess(e.getUniqueId(), e.getName(), user);
