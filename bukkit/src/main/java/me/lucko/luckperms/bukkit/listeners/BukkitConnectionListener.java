@@ -39,6 +39,7 @@ import me.lucko.luckperms.common.plugin.util.AbstractConnectionListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -90,8 +91,30 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
                 User user = loadUser(uuid, name);
                 recordConnection(uuid);
                 this.plugin.getEventDispatcher().dispatchPlayerLoginProcess(uuid, name, user);
+                this.plugin.getBootstrap().getScheduler().executeSync(() -> waitForPlayerToJoin(user, uuid, 0));
             });
         });
+    }
+
+    private void waitForPlayerToJoin(User user, UUID uuid, int depth) {
+        Player player = Bukkit.getPlayer(uuid);
+
+        if (player == null) {
+            if (depth < 60 * 20) {
+                this.plugin.getLoader().getServer().getScheduler().runTaskLater(this.plugin.getLoader(), () -> waitForPlayerToJoin(user, uuid, depth + 1), 1);
+            }
+            return;
+        }
+
+        LuckPermsPermissible lpPermissible = new LuckPermsPermissible(player, user, this.plugin);
+
+        try {
+            PermissibleInjector.inject(player, lpPermissible, this.plugin.getLogger());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.plugin.getContextManager().signalContextUpdate(player);
     }
 
     private void printCraftBukkitOfflineModeError() {
