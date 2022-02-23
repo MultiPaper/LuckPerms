@@ -111,7 +111,9 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
         try {
             PermissibleInjector.inject(player, lpPermissible, this.plugin.getLogger());
         } catch (Exception e) {
-            e.printStackTrace();
+            if (e.getMessage() == null || !e.getMessage().contains("LPPermissible already injected into player")) {
+                e.printStackTrace();
+            }
         }
 
         this.plugin.getContextManager().signalContextUpdate(player);
