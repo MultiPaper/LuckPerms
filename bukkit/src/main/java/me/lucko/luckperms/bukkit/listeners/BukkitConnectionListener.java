@@ -94,6 +94,28 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
                 this.plugin.getBootstrap().getScheduler().executeSync(() -> waitForPlayerToJoin(user, uuid, 0));
             });
         });
+
+        MultiLib.onString(plugin.getBootstrap().getLoader(), "luckperms:quit", string -> {
+            String[] args = string.split(" ");
+            UUID uuid = UUID.fromString(args[0]);
+            String name = args[1];
+
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) {
+                this.plugin.getLogger().warn("Tried to run quit functions on external player " + name + ", but they are online.");
+                return;
+            }
+
+            try {
+                PermissibleInjector.uninject(player, true);
+            } catch (Exception ex) {
+                this.plugin.getLogger().severe("Exception thrown when unloading permissions from " +
+                        player.getUniqueId() + " - " + player.getName(), ex);
+            }
+
+            // remove their contexts cache
+            this.plugin.getContextManager().onPlayerQuit(player);
+        });
     }
 
     private void waitForPlayerToJoin(User user, UUID uuid, int depth) {
@@ -284,6 +306,7 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
         // this allows plugins listening after us on MONITOR to still have intact permissions data
         this.plugin.getBootstrap().getServer().getScheduler().runTaskLater(this.plugin.getLoader(), () -> {
             // Remove the custom permissible
+            MultiLib.notify("luckperms:quit", player.getUniqueId() + " " + player.getName());
             try {
                 PermissibleInjector.uninject(player, true);
             } catch (Exception ex) {
