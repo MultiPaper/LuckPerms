@@ -48,10 +48,8 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.lang.ref.WeakReference;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -66,6 +64,8 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
 
     private final Set<UUID> deniedAsyncLogin = Collections.synchronizedSet(new HashSet<>());
     private final Set<UUID> deniedLogin = Collections.synchronizedSet(new HashSet<>());
+
+    private final static HashMap<UUID, WeakReference<Player>> playerCache = new HashMap<>();
 
     public BukkitConnectionListener(LPBukkitPlugin plugin) {
         super(plugin);
@@ -101,8 +101,18 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
             String name = args[1];
 
             Player player = Bukkit.getPlayer(uuid);
-            if (player == null) {
+            if (player != null) {
                 this.plugin.getLogger().warn("Tried to run quit functions on external player " + name + ", but they are online.");
+                return;
+            }
+
+            WeakReference<Player> playerRef = playerCache.remove(uuid);
+            if (playerRef != null) {
+                player = playerRef.get();
+            }
+
+            if (player == null) {
+                this.plugin.getLogger().warn("Tried to run quit functions on external player " + name + ", but we do not have their Player object cached (" + playerRef + ").");
                 return;
             }
 
@@ -127,6 +137,8 @@ public class BukkitConnectionListener extends AbstractConnectionListener impleme
             }
             return;
         }
+
+        playerCache.put(player.getUniqueId(), new WeakReference<>(player));
 
         LuckPermsPermissible lpPermissible = new LuckPermsPermissible(player, user, this.plugin);
 
