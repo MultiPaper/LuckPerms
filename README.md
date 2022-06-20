@@ -1,3 +1,3 @@
 # MultiPaper-compatible Luck Perms
 
-Forwards AsyncPlayerPreLoginEvent to all servers.
+Loads external players' permissions when they join, and unloads them when they quit.
