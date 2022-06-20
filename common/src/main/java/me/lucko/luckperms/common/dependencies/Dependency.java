@@ -64,29 +64,29 @@ public enum Dependency {
     ADVENTURE(
             "me{}lucko",
             "adventure-api",
-            "4.9.4",
-            "bh1cB0ZdzxstqRfVowKbgAZM16T/CtJ7oIJCaknbGeM=",
+            "4.11.0",
+            "7xrFaBbsTiQPZKBDzvDnTd8XIgOsHTy9qQICm3342GU=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM(
             "me{}lucko",
             "adventure-platform-api",
-            "4.9.4",
-            "CZVyxNOi7ln7dgldfDs1m1M6d9w/bKG8Rp27qfAuTJw=",
+            "4.11.1",
+            "zCnxNgosme++TsheFaL+YHdtRIrp+oJhUiI8awsKgfQ=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM_BUKKIT(
             "me{}lucko",
             "adventure-platform-bukkit",
-            "4.9.4",
-            "JkA3GGkf3pADA3PACYfdVlAglstgzz+ajAxElMXXn6I=",
+            "4.11.1",
+            "+xpPjOz1YkhB2Dq8JDNPcKOm4IUijolg10a2x+ISpBc=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM_BUNGEECORD(
             "me{}lucko",
             "adventure-platform-bungeecord",
-            "4.9.4",
-            "a/p8/eIjbQnNlN5cJ/yIUjttZyJ/GRXgcsg8rhY7SwI=",
+            "4.11.1",
+            "+WUdRdZ6qkacw3ha/R3ayLx46soMywGe70Zmnw4yha8=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     EVENT(
@@ -128,8 +128,8 @@ public enum Dependency {
     COMMODORE(
             "me{}lucko",
             "commodore",
-            "1.12",
-            "rLpLs20OG9TETCx1QzA+I+LY8P+p6Q9fUjLSmJcl2Kk=",
+            "2.0",
+            "5pPvU2MFRK4doXDOG8UKTp1y7D7uuTfiPglTosUh4zk=",
             Relocation.of("commodore", "me{}lucko{}commodore")
     ),
     COMMODORE_FILE(
@@ -197,11 +197,35 @@ public enum Dependency {
             "1.7.30",
             "zboHlk0btAoHYUhcax6ML4/Z6x0ZxTkorA1/lRAQXFc="
     ),
-    MONGODB_DRIVER(
+    MONGODB_DRIVER_CORE(
             "org.mongodb",
-            "mongo-java-driver",
-            "3.12.8",
-            "92uqr4qaL3dbw5wrb8sQWQqFxpzr/Y/DhForeyg3taI=",
+            "mongodb-driver-core",
+            "4.5.0",
+            "awqoW0ImUcrCTA2d1rDCjDLEjLMCrOjKWIcC7E+zLGA=",
+            Relocation.of("mongodb", "com{}mongodb"),
+            Relocation.of("bson", "org{}bson")
+    ),
+    MONGODB_DRIVER_LEGACY(
+            "org.mongodb",
+            "mongodb-driver-legacy",
+            "4.5.0",
+            "77KZGIr3KZmzBpN69rGOLXmnlJIBCXRl/U4gEIdlFhY=",
+            Relocation.of("mongodb", "com{}mongodb"),
+            Relocation.of("bson", "org{}bson")
+    ),
+    MONGODB_DRIVER_SYNC(
+            "org.mongodb",
+            "mongodb-driver-sync",
+            "4.5.0",
+            "q9XDSGJjlo/Ek6jHoCbqWnaK/dghB8y9aDM0hCLiSvk=",
+            Relocation.of("mongodb", "com{}mongodb"),
+            Relocation.of("bson", "org{}bson")
+    ),
+    MONGODB_DRIVER_BSON(
+            "org.mongodb",
+            "bson",
+            "4.5.0",
+            "6CFyEzxbdeiBEXdDBmcgqWs5dvicgFkBLU3MlQUIqRA=",
             Relocation.of("mongodb", "com{}mongodb"),
             Relocation.of("bson", "org{}bson")
     ),

@@ -54,6 +54,7 @@ subprojects {
         mavenCentral()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://repo.lucko.me/' }
+        maven { url 'https://libraries.minecraft.net/' }
         maven { url 'https://repo.clojars.org/' }
     }
 }
