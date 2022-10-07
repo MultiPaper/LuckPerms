@@ -14,9 +14,9 @@ repositories {
 
 dependencies {
     // https://modmuss50.me/fabric.html
-    minecraft 'com.mojang:minecraft:1.19'
-    mappings 'net.fabricmc:yarn:1.19+build.1:v2'
-    modImplementation 'net.fabricmc:fabric-loader:0.14.6'
+    minecraft 'com.mojang:minecraft:1.19.2'
+    mappings 'net.fabricmc:yarn:1.19.2+build.9:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.14.9'
 
     Set<String> apiModules = [
             'fabric-api-base',
@@ -26,10 +26,10 @@ dependencies {
     ]
 
     apiModules.forEach {
-        modImplementation(fabricApi.module(it, '0.55.2+1.19'))
+        modImplementation(fabricApi.module(it, '0.60.0+1.19.2'))
     }
 
-    include(modImplementation('me.lucko:fabric-permissions-api:0.1-SNAPSHOT'))
+    include(modImplementation('me.lucko:fabric-permissions-api:0.2-SNAPSHOT'))
 
     implementation project(':common')
 }
@@ -69,6 +69,7 @@ shadowJar {
     relocate 'com.rabbitmq', 'me.lucko.luckperms.lib.rabbitmq'
     relocate 'org.apache.commons.pool2', 'me.lucko.luckperms.lib.commonspool2'
     relocate 'ninja.leaping.configurate', 'me.lucko.luckperms.lib.configurate'
+    relocate 'org.yaml.snakeyaml', 'me.lucko.luckperms.lib.yaml'
 }
 
 task remappedShadowJar(type: RemapJarTask) {
