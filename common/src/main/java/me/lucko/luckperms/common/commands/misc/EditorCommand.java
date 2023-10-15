@@ -41,7 +41,6 @@ import me.lucko.luckperms.common.sender.Sender;
 import me.lucko.luckperms.common.util.Predicates;
 import me.lucko.luckperms.common.webeditor.WebEditorRequest;
 import me.lucko.luckperms.common.webeditor.WebEditorSession;
-
 import net.luckperms.api.node.Node;
 
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class EditorCommand extends SingleCommand {
 
         Message.EDITOR_START.send(sender);
 
-        WebEditorSession.createAndOpen(holders, tracks, sender, label, plugin);
+        WebEditorSession.create(holders, tracks, sender, label, plugin).open();
     }
 
     private enum Type {

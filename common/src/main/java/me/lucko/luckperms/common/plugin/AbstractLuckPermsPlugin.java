@@ -38,6 +38,7 @@ import me.lucko.luckperms.common.config.generic.adapter.SystemPropertyConfigAdap
 import me.lucko.luckperms.common.context.calculator.ConfigurationContextCalculator;
 import me.lucko.luckperms.common.dependencies.Dependency;
 import me.lucko.luckperms.common.dependencies.DependencyManager;
+import me.lucko.luckperms.common.dependencies.DependencyManagerImpl;
 import me.lucko.luckperms.common.event.AbstractEventBus;
 import me.lucko.luckperms.common.event.EventDispatcher;
 import me.lucko.luckperms.common.event.gen.GeneratedEventClass;
@@ -53,7 +54,6 @@ import me.lucko.luckperms.common.messaging.MessagingFactory;
 import me.lucko.luckperms.common.plugin.logging.PluginLogger;
 import me.lucko.luckperms.common.storage.Storage;
 import me.lucko.luckperms.common.storage.StorageFactory;
-import me.lucko.luckperms.common.storage.StorageType;
 import me.lucko.luckperms.common.storage.implementation.file.watcher.FileWatcher;
 import me.lucko.luckperms.common.storage.misc.DataConstraints;
 import me.lucko.luckperms.common.tasks.CacheHousekeepingTask;
@@ -63,9 +63,7 @@ import me.lucko.luckperms.common.treeview.PermissionRegistry;
 import me.lucko.luckperms.common.verbose.VerboseHandler;
 import me.lucko.luckperms.common.webeditor.socket.WebEditorSocket;
 import me.lucko.luckperms.common.webeditor.store.WebEditorStore;
-
 import net.luckperms.api.LuckPerms;
-
 import okhttp3.OkHttpClient;
 
 import java.io.IOException;
@@ -114,7 +112,7 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
      */
     public final void load() {
         // load dependencies
-        this.dependencyManager = new DependencyManager(this);
+        this.dependencyManager = createDependencyManager();
         this.dependencyManager.loadDependencies(getGlobalDependencies());
 
         // load translations
@@ -150,8 +148,17 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
                 .callTimeout(15, TimeUnit.SECONDS)
                 .build();
 
-        this.bytebin = new BytebinClient(this.httpClient, getConfiguration().get(ConfigKeys.BYTEBIN_URL), "luckperms");
-        this.bytesocks = new BytesocksClient(this.httpClient, getConfiguration().get(ConfigKeys.BYTESOCKS_HOST), "luckperms/editor");
+        this.bytebin = new BytebinClient(
+                this.httpClient,
+                getConfiguration().get(ConfigKeys.BYTEBIN_URL),
+                "luckperms"
+        );
+        this.bytesocks = new BytesocksClient(
+                this.httpClient,
+                getConfiguration().get(ConfigKeys.BYTESOCKS_HOST),
+                getConfiguration().get(ConfigKeys.BYTESOCKS_USE_TLS),
+                "luckperms/editor"
+        );
         this.webEditorStore = new WebEditorStore(this);
 
         // init translation repo and update bundle files
@@ -160,8 +167,12 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
 
         // now the configuration is loaded, we can create a storage factory and load initial dependencies
         StorageFactory storageFactory = new StorageFactory(this);
-        Set<StorageType> storageTypes = storageFactory.getRequiredTypes();
-        this.dependencyManager.loadStorageDependencies(storageTypes);
+        this.dependencyManager.loadStorageDependencies(
+                storageFactory.getRequiredTypes(),
+                getConfiguration().get(ConfigKeys.REDIS_ENABLED),
+                getConfiguration().get(ConfigKeys.RABBITMQ_ENABLED),
+                getConfiguration().get(ConfigKeys.NATS_ENABLED)
+        );
 
         // register listeners
         registerPlatformListeners();
@@ -173,7 +184,7 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
                 this.fileWatcher = new FileWatcher(this, getBootstrap().getDataDirectory());
             } catch (Throwable e) {
                 // catch throwable here, seems some JVMs throw UnsatisfiedLinkError when trying
-                // to create a watch service. see: https://github.com/lucko/LuckPerms/issues/2066
+                // to create a watch service. see: https://github.com/LuckPerms/LuckPerms/issues/2066
                 getLogger().warn("Error occurred whilst trying to create a file watcher:", e);
             }
         }
@@ -289,6 +300,9 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
         this.httpClient.dispatcher().executorService().shutdown();
         this.httpClient.connectionPool().evictAll();
 
+        // close isolated loaders for non-relocated dependencies
+        getDependencyManager().close();
+
         // close classpath appender
         getBootstrap().getClassPathAppender().close();
 
@@ -296,6 +310,10 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
     }
 
     // hooks called during load
+
+    protected DependencyManager createDependencyManager() {
+        return new DependencyManagerImpl(this);
+    }
 
     protected Set<Dependency> getGlobalDependencies() {
         return EnumSet.of(
@@ -440,6 +458,10 @@ public abstract class AbstractLuckPermsPlugin implements LuckPermsPlugin {
     @Override
     public LuckPermsConfiguration getConfiguration() {
         return this.configuration;
+    }
+
+    public OkHttpClient getHttpClient() {
+        return this.httpClient;
     }
 
     @Override

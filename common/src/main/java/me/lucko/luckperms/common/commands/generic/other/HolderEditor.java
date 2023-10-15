@@ -43,7 +43,6 @@ import me.lucko.luckperms.common.sender.Sender;
 import me.lucko.luckperms.common.util.Predicates;
 import me.lucko.luckperms.common.webeditor.WebEditorRequest;
 import me.lucko.luckperms.common.webeditor.WebEditorSession;
-
 import net.luckperms.api.node.Node;
 
 import java.util.ArrayList;
@@ -85,7 +84,7 @@ public class HolderEditor<T extends PermissionHolder> extends ChildCommand<T> {
 
         Message.EDITOR_START.send(sender);
 
-        WebEditorSession.createAndOpen(holders, Collections.emptyList(), sender, label, plugin);
+        WebEditorSession.create(holders, Collections.emptyList(), sender, label, plugin).open();
     }
 
 }

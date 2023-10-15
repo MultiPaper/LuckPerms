@@ -31,13 +31,10 @@ import me.lucko.luckperms.standalone.app.integration.ShutdownCallback;
 import me.lucko.luckperms.standalone.app.utils.DockerCommandSocket;
 import me.lucko.luckperms.standalone.app.utils.HeartbeatHttpServer;
 import me.lucko.luckperms.standalone.app.utils.TerminalInterface;
-
 import net.luckperms.api.LuckPerms;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,7 +77,7 @@ public class LuckPermsApplication implements AutoCloseable {
 
         List<String> arguments = Arrays.asList(args);
         if (arguments.contains("--docker")) {
-            this.dockerCommandSocket = DockerCommandSocket.createAndStart(3000, terminal);
+            this.dockerCommandSocket = DockerCommandSocket.createAndStart("/opt/luckperms/luckperms.sock", terminal);
             this.heartbeatHttpServer = HeartbeatHttpServer.createAndStart(3001, this.healthReporter);
         }
 
@@ -98,7 +95,7 @@ public class LuckPermsApplication implements AutoCloseable {
         if (this.dockerCommandSocket != null) {
             try {
                 this.dockerCommandSocket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOGGER.warn(e);
             }
         }
@@ -129,6 +126,18 @@ public class LuckPermsApplication implements AutoCloseable {
     // called before start()
     public void setHealthReporter(HealthReporter healthReporter) {
         this.healthReporter = healthReporter;
+    }
+
+    public LuckPerms getApi() {
+        return this.luckPermsApi;
+    }
+
+    public CommandExecutor getCommandExecutor() {
+        return this.commandExecutor;
+    }
+
+    public HealthReporter getHealthReporter() {
+        return this.healthReporter;
     }
 
     public String getVersion() {

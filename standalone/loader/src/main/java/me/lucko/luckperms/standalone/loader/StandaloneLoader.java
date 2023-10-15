@@ -29,7 +29,6 @@ import me.lucko.luckperms.common.loader.JarInJarClassLoader;
 import me.lucko.luckperms.common.loader.LoaderBootstrap;
 import me.lucko.luckperms.standalone.app.LuckPermsApplication;
 import me.lucko.luckperms.standalone.app.integration.ShutdownCallback;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +50,8 @@ public class StandaloneLoader implements ShutdownCallback {
     public static final Logger LOGGER = LogManager.getLogger(StandaloneLoader.class);
 
     private static final String JAR_NAME = "luckperms-standalone.jarinjar";
-    private static final String BOOTSTRAP_CLASS = "me.lucko.luckperms.standalone.LPStandaloneBootstrap";
+    private static final String BOOTSTRAP_PLUGIN_CLASS = "me.lucko.luckperms.standalone.LPStandaloneBootstrap";
+    private static final String BOOTSTRAP_DEPENDENCY_PRELOADER_CLASS = "me.lucko.luckperms.standalone.StandaloneDependencyPreloader";
 
     private LuckPermsApplication app;
     private JarInJarClassLoader loader;
@@ -72,7 +72,19 @@ public class StandaloneLoader implements ShutdownCallback {
         // create a jar-in-jar classloader for the standalone plugin, then enable it
         // the application is passes to the plugin constructor, to allow it to pass hooks back
         this.loader = new JarInJarClassLoader(getClass().getClassLoader(), JAR_NAME);
-        this.plugin = this.loader.instantiatePlugin(BOOTSTRAP_CLASS, LuckPermsApplication.class, this.app);
+
+        // special case for dependency preload command
+        if (args.length == 1 && args[0].equals("preloadDependencies")) {
+            try {
+                Class<?> clazz = this.loader.loadClass(BOOTSTRAP_DEPENDENCY_PRELOADER_CLASS);
+                clazz.getMethod("main").invoke(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        this.plugin = this.loader.instantiatePlugin(BOOTSTRAP_PLUGIN_CLASS, LuckPermsApplication.class, this.app);
         this.plugin.onLoad();
         this.plugin.onEnable();
 

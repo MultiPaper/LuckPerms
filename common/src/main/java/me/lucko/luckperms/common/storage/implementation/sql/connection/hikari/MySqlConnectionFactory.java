@@ -25,18 +25,12 @@
 
 package me.lucko.luckperms.common.storage.implementation.sql.connection.hikari;
 
-import com.zaxxer.hikari.HikariConfig;
-
 import me.lucko.luckperms.common.storage.misc.StorageCredentials;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.function.Function;
 
-public class MySqlConnectionFactory extends HikariConnectionFactory {
+public class MySqlConnectionFactory extends DriverBasedHikariConnectionFactory {
     public MySqlConnectionFactory(StorageCredentials configuration) {
         super(configuration);
     }
@@ -52,35 +46,17 @@ public class MySqlConnectionFactory extends HikariConnectionFactory {
     }
 
     @Override
-    protected void configureDatabase(HikariConfig config, String address, String port, String databaseName, String username, String password) {
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        config.setJdbcUrl("jdbc:mysql://" + address + ":" + port + "/" + databaseName);
-        config.setUsername(username);
-        config.setPassword(password);
+    protected String driverClassName() {
+        return "com.mysql.cj.jdbc.Driver";
     }
 
     @Override
-    protected void postInitialize() {
-        super.postInitialize();
-
-        // Calling Class.forName("com.mysql.cj.jdbc.Driver") is enough to call the static initializer
-        // which makes our driver available in DriverManager. We don't want that, so unregister it after
-        // the pool has been setup.
-        Enumeration<Driver> drivers = DriverManager.getDrivers();
-        while (drivers.hasMoreElements()) {
-            Driver driver = drivers.nextElement();
-            if (driver.getClass().getName().equals("com.mysql.cj.jdbc.Driver")) {
-                try {
-                    DriverManager.deregisterDriver(driver);
-                } catch (SQLException e) {
-                    // ignore
-                }
-            }
-        }
+    protected String driverJdbcIdentifier() {
+        return "mysql";
     }
 
     @Override
-    protected void overrideProperties(Map<String, String> properties) {
+    protected void overrideProperties(Map<String, Object> properties) {
         // https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration
         properties.putIfAbsent("cachePrepStmts", "true");
         properties.putIfAbsent("prepStmtCacheSize", "250");

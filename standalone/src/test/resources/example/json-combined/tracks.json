@@ -1,0 +1,8 @@
+{
+  "example": {
+    "groups": [
+      "default",
+      "test"
+    ]
+  }
+}

@@ -27,7 +27,6 @@ package me.lucko.luckperms.common.storage.misc;
 
 import net.luckperms.api.node.HeldNode;
 import net.luckperms.api.node.Node;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("deprecation")
@@ -53,6 +52,11 @@ public final class NodeEntry<H extends Comparable<H>, N extends Node> implements
     @Override
     public @NonNull N getNode() {
         return this.node;
+    }
+
+    @Override
+    public String toString() {
+        return "NodeEntry(holder=" + this.holder + ", node=" + this.node + ')';
     }
 
     @Override

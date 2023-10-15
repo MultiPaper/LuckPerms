@@ -25,15 +25,13 @@
 
 package me.lucko.luckperms.common.storage.implementation.sql.connection.hikari;
 
-import com.zaxxer.hikari.HikariConfig;
-
 import me.lucko.luckperms.common.storage.misc.StorageCredentials;
 
 import java.util.Map;
 import java.util.function.Function;
 
-public class PostgreConnectionFactory extends HikariConnectionFactory {
-    public PostgreConnectionFactory(StorageCredentials configuration) {
+public class PostgresConnectionFactory extends DriverBasedHikariConnectionFactory {
+    public PostgresConnectionFactory(StorageCredentials configuration) {
         super(configuration);
     }
 
@@ -48,17 +46,17 @@ public class PostgreConnectionFactory extends HikariConnectionFactory {
     }
 
     @Override
-    protected void configureDatabase(HikariConfig config, String address, String port, String databaseName, String username, String password) {
-        config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
-        config.addDataSourceProperty("serverName", address);
-        config.addDataSourceProperty("portNumber", port);
-        config.addDataSourceProperty("databaseName", databaseName);
-        config.addDataSourceProperty("user", username);
-        config.addDataSourceProperty("password", password);
+    protected String driverClassName() {
+        return "org.postgresql.Driver";
     }
 
     @Override
-    protected void overrideProperties(Map<String, String> properties) {
+    protected String driverJdbcIdentifier() {
+        return "postgresql";
+    }
+
+    @Override
+    protected void overrideProperties(Map<String, Object> properties) {
         super.overrideProperties(properties);
 
         // remove the default config properties which don't exist for PostgreSQL

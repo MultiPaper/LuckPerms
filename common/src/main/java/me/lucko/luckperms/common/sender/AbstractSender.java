@@ -26,9 +26,7 @@
 package me.lucko.luckperms.common.sender;
 
 import com.google.common.collect.Iterables;
-
 import me.lucko.luckperms.common.plugin.LuckPermsPlugin;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.luckperms.api.util.Tristate;
@@ -91,12 +89,12 @@ public final class AbstractSender<T> implements Sender {
 
     @Override
     public Tristate getPermissionValue(String permission) {
-        return isConsole() ? Tristate.TRUE : this.factory.getPermissionValue(this.sender, permission);
+        return (isConsole() && this.factory.consoleHasAllPermissions()) ? Tristate.TRUE : this.factory.getPermissionValue(this.sender, permission);
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return isConsole() || this.factory.hasPermission(this.sender, permission);
+        return (isConsole() && this.factory.consoleHasAllPermissions()) || this.factory.hasPermission(this.sender, permission);
     }
 
     @Override

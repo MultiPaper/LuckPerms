@@ -8,7 +8,7 @@
 # |                                                                                              | #
 # |  WIKI:        https://luckperms.net/wiki                                                     | #
 # |  DISCORD:     https://discord.gg/luckperms                                                   | #
-# |  BUG REPORTS: https://github.com/lucko/LuckPerms/issues                                      | #
+# |  BUG REPORTS: https://github.com/LuckPerms/LuckPerms/issues                                  | #
 # |                                                                                              | #
 # |  Each option in this file is documented and explained here:                                  | #
 # |   ==>  https://luckperms.net/wiki/Configuration                                              | #
@@ -230,6 +230,8 @@ watch-files: true
 #                    configured below.
 #   => rabbitmq      Uses RabbitMQ pub-sub to push changes. Your server connection info must be
 #                    configured below.
+#   => nats          Uses Nats pub-sub to push changes. Your server connection info must be
+#                    configured below.
 #   => custom        Uses a messaging service provided using the LuckPerms API.
 #   => auto          Attempts to automatically setup a messaging service using redis or sql.
 messaging-service: auto
@@ -249,7 +251,16 @@ broadcast-received-log-entries: false
 
 # Settings for Redis.
 # Port 6379 is used by default; set address to "host:port" if differs
+# Multiple Redis nodes can be specified in the same format as a string list under the name "addresses".
 redis:
+  enabled: false
+  address: localhost
+  username: ''
+  password: ''
+
+# Settings for Nats.
+# Port 4222 is used by default; set address to "host:port" if differs
+nats:
   enabled: false
   address: localhost
   username: ''

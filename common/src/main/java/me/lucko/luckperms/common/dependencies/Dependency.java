@@ -26,7 +26,6 @@
 package me.lucko.luckperms.common.dependencies;
 
 import com.google.common.collect.ImmutableList;
-
 import me.lucko.luckperms.common.dependencies.relocation.Relocation;
 import me.lucko.luckperms.common.dependencies.relocation.RelocationHelper;
 
@@ -57,36 +56,35 @@ public enum Dependency {
     JAR_RELOCATOR(
             "me.lucko",
             "jar-relocator",
-            "1.4",
-            "1RsiF3BiVztjlfTA+svDCuoDSGFuSpTZYHvUK8yBx8I="
+            "1.7",
+            "b30RhOF6kHiHl+O5suNLh/+eAr1iOFEFLXhwkHHDu4I="
     ),
-
     ADVENTURE(
             "me{}lucko",
             "adventure-api",
-            "4.11.0",
-            "7xrFaBbsTiQPZKBDzvDnTd8XIgOsHTy9qQICm3342GU=",
+            "4.13.0",
+            "gcmYlY1KDrzbnE9nB8rA44oBZKPSMvv9kNRefoEuud0=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM(
             "me{}lucko",
             "adventure-platform-api",
-            "4.11.2",
-            "zCnxNgosme++TsheFaL+YHdtRIrp+oJhUiI8awsKgfQ=",
+            "4.13.0",
+            "Kk8IkEMVa9ITBfC3yocpcXQiZ9CwN9VxeWjKUD8I0n0=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM_BUKKIT(
             "me{}lucko",
             "adventure-platform-bukkit",
-            "4.11.2",
-            "mrtYZvt00GH4oejuBJ2QEbFkmz1F+PGmthPwroSxCgo=",
+            "4.13.1",
+            "7KY4dzEa6nOAWSIKB17f9rtTTdeXHVecUMMgSATzA7o",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     ADVENTURE_PLATFORM_BUNGEECORD(
             "me{}lucko",
             "adventure-platform-bungeecord",
-            "4.11.2",
-            "+WUdRdZ6qkacw3ha/R3ayLx46soMywGe70Zmnw4yha8=",
+            "4.13.0",
+            "MLk/qAgWC9YT2ImLq/sVo114V5Rk1jQr4jc57WAoO74=",
             Relocation.of("adventure", "net{}kyori{}adventure")
     ),
     EVENT(
@@ -142,8 +140,8 @@ public enum Dependency {
     MARIADB_DRIVER(
             "org{}mariadb{}jdbc",
             "mariadb-java-client",
-            "2.7.2",
-            "o/Z3bfCELPZefxWFFQEtUwfalJ9mBCKC4e5EdN0Z9Eg=",
+            "3.1.3",
+            "ESl+5lYkJsScgTh8hgFTy8ExxMPQQkktT20tl6s6HKU=",
             Relocation.of("mariadb", "org{}mariadb{}jdbc")
     ),
     MYSQL_DRIVER(
@@ -156,17 +154,25 @@ public enum Dependency {
     POSTGRESQL_DRIVER(
             "org{}postgresql",
             "postgresql",
-            "42.2.19",
-            "IydH+gkk2Iom36QrgSi2+hFAgC2AQSWJFZboyl8pEyI=",
+            "42.6.0",
+            "uBfGekDJQkn9WdTmhuMyftDT0/rkJrINoPHnVlLPxGE=",
             Relocation.of("postgresql", "org{}postgresql")
     ),
-    H2_DRIVER(
+    H2_DRIVER_LEGACY(
             "com.h2database",
             "h2",
             // seems to be a compat bug in 1.4.200 with older dbs
             // see: https://github.com/h2database/h2database/issues/2078
             "1.4.199",
             "MSWhZ0O8a0z7thq7p4MgPx+2gjCqD9yXiY95b5ml1C4="
+            // we don't apply relocations to h2 - it gets loaded via
+            // an isolated classloader
+    ),
+    H2_DRIVER(
+            "com.h2database",
+            "h2",
+            "2.1.214",
+            "1iPNwPYdIYz1SajQnxw5H/kQlhFrIuJHVHX85PvnK9A="
             // we don't apply relocations to h2 - it gets loaded via
             // an isolated classloader
     ),
@@ -232,10 +238,17 @@ public enum Dependency {
     JEDIS(
             "redis.clients",
             "jedis",
-            "3.5.2",
-            "jX3340YaYjHFQN2sA+GCo33LB4FuIYKgQUPUv2MK/Xo=",
+            "4.4.3",
+            "wwwoCDPCywcfoNwpvwP95kXYusXSTtXhuVrB31sxE0k=",
             Relocation.of("jedis", "redis{}clients{}jedis"),
             Relocation.of("commonspool2", "org{}apache{}commons{}pool2")
+    ),
+    NATS(
+        "io.nats",
+        "jnats",
+        "2.16.4",
+        "/WZgFi9iJToRGIiGoShlwE5aHwstOuNGZyr4UaBRilM=",
+        Relocation.of("nats", "io{}nats{}client")
     ),
     RABBITMQ(
             "com{}rabbitmq",

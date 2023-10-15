@@ -28,7 +28,6 @@ package me.lucko.luckperms.common.config;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-
 import me.lucko.luckperms.common.cacheddata.type.SimpleMetaValueSelector;
 import me.lucko.luckperms.common.config.generic.KeyedConfiguration;
 import me.lucko.luckperms.common.config.generic.key.ConfigKey;
@@ -45,7 +44,6 @@ import me.lucko.luckperms.common.storage.implementation.split.SplitStorageType;
 import me.lucko.luckperms.common.storage.misc.StorageCredentials;
 import me.lucko.luckperms.common.util.ImmutableCollectors;
 import me.lucko.luckperms.common.util.Predicates;
-
 import net.luckperms.api.context.ContextSatisfyMode;
 import net.luckperms.api.metastacking.DuplicateRemovalFunction;
 import net.luckperms.api.metastacking.MetaStackDefinition;
@@ -75,6 +73,7 @@ import static me.lucko.luckperms.common.config.generic.key.ConfigKeyFactory.lowe
 import static me.lucko.luckperms.common.config.generic.key.ConfigKeyFactory.mapKey;
 import static me.lucko.luckperms.common.config.generic.key.ConfigKeyFactory.notReloadable;
 import static me.lucko.luckperms.common.config.generic.key.ConfigKeyFactory.stringKey;
+import static me.lucko.luckperms.common.config.generic.key.ConfigKeyFactory.stringListKey;
 
 /**
  * All of the {@link ConfigKey}s used by LuckPerms.
@@ -407,7 +406,7 @@ public final class ConfigKeys {
         String middleSpacer = l.getString("meta-formatting.suffix.middle-spacer", " ");
         String endSpacer = l.getString("meta-formatting.suffix.end-spacer", "");
         DuplicateRemovalFunction duplicateRemovalFunction;
-        switch (l.getString("meta-formatting.prefix.duplicates", "").toLowerCase(Locale.ROOT)) {
+        switch (l.getString("meta-formatting.suffix.duplicates", "").toLowerCase(Locale.ROOT)) {
             case "first-only":
                 duplicateRemovalFunction = DuplicateRemovalFunction.FIRST_ONLY;
                 break;
@@ -463,6 +462,11 @@ public final class ConfigKeys {
      * If server operators should be able to use LuckPerms commands by default. Only used by the Bukkit platform.
      */
     public static final ConfigKey<Boolean> COMMANDS_ALLOW_OP = notReloadable(booleanKey("commands-allow-op", true));
+
+    /**
+     * If LuckPerms should rate-limit command executions.
+     */
+    public static final ConfigKey<Boolean> COMMANDS_RATE_LIMIT = booleanKey("commands-rate-limit", true);
 
     /**
      * If Vault lookups for offline players on the main server thread should be enabled
@@ -637,6 +641,11 @@ public final class ConfigKeys {
     public static final ConfigKey<String> REDIS_ADDRESS = notReloadable(stringKey("redis.address", null));
 
     /**
+     * The addresses of the redis servers (only for redis clusters)
+     */
+    public static final ConfigKey<List<String>> REDIS_ADDRESSES = notReloadable(stringListKey("redis.addresses", ImmutableList.of()));
+
+    /**
      * The username to connect with, or an empty string if it should use default
      */
     public static final ConfigKey<String> REDIS_USERNAME = notReloadable(stringKey("redis.username", ""));
@@ -650,6 +659,31 @@ public final class ConfigKeys {
      * If the redis connection should use SSL
      */
     public static final ConfigKey<Boolean> REDIS_SSL = notReloadable(booleanKey("redis.ssl", false));
+
+    /**
+     * If nats messaging is enabled
+     */
+    public static final ConfigKey<Boolean> NATS_ENABLED = notReloadable(booleanKey("nats.enabled", false));
+
+    /**
+     * The address of the nats server
+     */
+    public static final ConfigKey<String> NATS_ADDRESS = notReloadable(stringKey("nats.address", null));
+
+    /**
+     * The username to connect with, or an empty string if it should use default
+     */
+    public static final ConfigKey<String> NATS_USERNAME = notReloadable(stringKey("nats.username", ""));
+
+    /**
+     * The password in use by the nats server, or an empty string if there is no password
+     */
+    public static final ConfigKey<String> NATS_PASSWORD = notReloadable(stringKey("nats.password", ""));
+
+    /**
+     * If the nats connection should use SSL
+     */
+    public static final ConfigKey<Boolean> NATS_SSL = notReloadable(booleanKey("nats.ssl", false));
 
     /**
      * If rabbitmq messaging is enabled
@@ -677,6 +711,11 @@ public final class ConfigKeys {
     public static final ConfigKey<String> RABBITMQ_PASSWORD = notReloadable(stringKey("rabbitmq.password", "guest"));
 
     /**
+     * If the editor key should be generated lazily (only when needed)
+     */
+    public static final ConfigKey<Boolean> EDITOR_LAZILY_GENERATE_KEY = booleanKey("editor-lazily-generate-key", false);
+
+    /**
      * The URL of the bytebin instance used to upload data
      */
     public static final ConfigKey<String> BYTEBIN_URL = stringKey("bytebin-url", "https://usercontent.luckperms.net/");
@@ -685,6 +724,11 @@ public final class ConfigKeys {
      * The host of the bytesocks instance used to communicate with
      */
     public static final ConfigKey<String> BYTESOCKS_HOST = stringKey("bytesocks-host", "usersockets.luckperms.net");
+
+    /**
+     * If TLS (https/wss) should be used when connecting to bytesocks
+     */
+    public static final ConfigKey<Boolean> BYTESOCKS_USE_TLS = booleanKey("bytesocks-use-tls", true);
 
     /**
      * The URL of the web editor

@@ -28,7 +28,6 @@ package me.lucko.luckperms.common.storage.implementation.sql;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.reflect.TypeToken;
-
 import me.lucko.luckperms.common.actionlog.Log;
 import me.lucko.luckperms.common.actionlog.LoggedAction;
 import me.lucko.luckperms.common.bulkupdate.BulkUpdate;
@@ -50,7 +49,6 @@ import me.lucko.luckperms.common.storage.misc.PlayerSaveResultImpl;
 import me.lucko.luckperms.common.util.Difference;
 import me.lucko.luckperms.common.util.Uuids;
 import me.lucko.luckperms.common.util.gson.GsonProvider;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.actionlog.Action;
@@ -400,6 +398,13 @@ public class SqlStorage implements StorageImplementation {
 
             return true;
         });
+
+        // if the user only has the default group, delete their data
+        boolean isDefaultUser = !this.plugin.getUserManager().isNonDefaultUser(user);
+        if (changes != null && isDefaultUser) {
+            user.normalData().addDefaultNodeToChangeSet();
+            changes = null;
+        }
 
         if (changes == null) {
             try (Connection c = this.connectionFactory.getConnection()) {

@@ -33,7 +33,6 @@ import me.lucko.luckperms.common.plugin.classpath.JarInJarClassPathAppender;
 import me.lucko.luckperms.common.plugin.logging.Log4jPluginLogger;
 import me.lucko.luckperms.common.plugin.logging.PluginLogger;
 import me.lucko.luckperms.standalone.app.LuckPermsApplication;
-
 import net.luckperms.api.platform.Platform;
 
 import java.nio.file.Path;
@@ -67,6 +66,21 @@ public class LPStandaloneBootstrap implements LuckPermsBootstrap, LoaderBootstra
         this.schedulerAdapter = new StandaloneSchedulerAdapter(this);
         this.classPathAppender = new JarInJarClassPathAppender(getClass().getClassLoader());
         this.plugin = new LPStandalonePlugin(this);
+    }
+
+    // visible for testing
+    protected LPStandaloneBootstrap(LuckPermsApplication loader, ClassPathAppender classPathAppender) {
+        this.loader = loader;
+
+        this.logger = new Log4jPluginLogger(LuckPermsApplication.LOGGER);
+        this.schedulerAdapter = new StandaloneSchedulerAdapter(this);
+        this.classPathAppender = classPathAppender;
+        this.plugin = createTestPlugin();
+    }
+
+    // visible for testing
+    protected LPStandalonePlugin createTestPlugin() {
+        return new LPStandalonePlugin(this);
     }
 
     // provide adapters

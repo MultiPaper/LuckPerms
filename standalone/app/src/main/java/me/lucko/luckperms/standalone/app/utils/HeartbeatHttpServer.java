@@ -29,9 +29,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-
 import me.lucko.luckperms.standalone.app.integration.HealthReporter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,7 +57,7 @@ public class HeartbeatHttpServer implements HttpHandler, AutoCloseable {
 
         try {
             socket = new HeartbeatHttpServer(healthReporter, port);
-            LOGGER.info("Created Heartbeat HTTP server on port " + port);
+            LOGGER.info("Started healthcheck HTTP server on :" + port);
         } catch (Exception e) {
             LOGGER.error("Error starting Heartbeat HTTP server", e);
         }

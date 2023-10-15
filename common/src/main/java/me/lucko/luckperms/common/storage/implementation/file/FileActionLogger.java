@@ -28,13 +28,11 @@ package me.lucko.luckperms.common.storage.implementation.file;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
-
 import me.lucko.luckperms.common.actionlog.ActionJsonSerializer;
 import me.lucko.luckperms.common.actionlog.Log;
 import me.lucko.luckperms.common.cache.BufferedRequest;
 import me.lucko.luckperms.common.plugin.LuckPermsPlugin;
 import me.lucko.luckperms.common.util.gson.GsonProvider;
-
 import net.luckperms.api.actionlog.Action;
 
 import java.io.BufferedReader;
@@ -133,6 +131,11 @@ public class FileActionLogger {
     }
 
     public Log getLog() throws IOException {
+        // if there is log content waiting to be written, flush immediately before trying to read
+        if (this.saveBuffer.isEnqueued()) {
+            this.saveBuffer.requestDirectly();
+        }
+
         if (!Files.exists(this.contentFile)) {
             return Log.empty();
         }
