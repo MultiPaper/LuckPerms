@@ -22,7 +22,7 @@ dependencies {
     }
     compileOnly 'lilypad.client.connect:api:0.0.1-SNAPSHOT'
 
-    implementation 'com.github.puregero:multilib:1.1.1'
+    implementation 'com.github.puregero:multilib:1.1.11'
 }
 
 shadowJar {
@@ -30,7 +30,7 @@ shadowJar {
 
     dependencies {
         include(dependency('me.lucko.luckperms:.*'))
-        include(dependency('com.github.puregero:multilib:1.1.1'))
+        include(dependency('com.github.puregero:multilib:1.1.11'))
     }
 
     relocate 'net.kyori.adventure', 'me.lucko.luckperms.lib.adventure'

@@ -25,6 +25,7 @@
 
 package me.lucko.luckperms.bukkit.inject.server;
 
+import com.github.puregero.multilib.MultiLib;
 import me.lucko.luckperms.bukkit.LPBukkitPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
@@ -111,7 +112,7 @@ public final class LuckPermsSubscriptionMap implements Map<String, Map<Permissib
     }
 
     public @NonNull Set<Permissible> subscribers(String permission) {
-        Collection<? extends Player> onlinePlayers = this.plugin.getBootstrap().getServer().getOnlinePlayers();
+        Collection<? extends Player> onlinePlayers = MultiLib.getAllOnlinePlayers();
         Set<Permissible> set = new HashSet<>(onlinePlayers.size() + this.subscriptions.size());
 
         // add permissibles from the subscriptions map
