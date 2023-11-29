@@ -23,25 +23,55 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.common.commands.misc;
+package me.lucko.luckperms.common.storage;
 
-import me.lucko.luckperms.common.command.abstraction.SingleCommand;
-import me.lucko.luckperms.common.command.access.CommandPermission;
-import me.lucko.luckperms.common.command.spec.CommandSpec;
-import me.lucko.luckperms.common.command.utils.ArgumentList;
-import me.lucko.luckperms.common.locale.Message;
-import me.lucko.luckperms.common.plugin.LuckPermsPlugin;
-import me.lucko.luckperms.common.sender.Sender;
-import me.lucko.luckperms.common.util.Predicates;
+public class StorageMetadata {
 
-public class InfoCommand extends SingleCommand {
-    public InfoCommand() {
-        super(CommandSpec.INFO, "Info", CommandPermission.INFO, Predicates.alwaysFalse());
+    // remote
+    private Boolean connected;
+    private Integer ping;
+
+    // local
+    private Long sizeBytes;
+
+    public Boolean connected() {
+        return this.connected;
     }
 
-    @Override
-    public void execute(LuckPermsPlugin plugin, Sender sender, ArgumentList args, String label) {
-        Message.INFO.send(sender, plugin, plugin.getStorage().getMeta());
+    public Integer ping() {
+        return this.ping;
+    }
+
+    public Long sizeBytes() {
+        return this.sizeBytes;
+    }
+
+    public StorageMetadata connected(boolean connected) {
+        this.connected = connected;
+        return this;
+    }
+
+    public StorageMetadata ping(int ping) {
+        this.ping = ping;
+        return this;
+    }
+
+    public StorageMetadata sizeBytes(long sizeBytes) {
+        this.sizeBytes = sizeBytes;
+        return this;
+    }
+
+    public StorageMetadata combine(StorageMetadata other) {
+        if (this.connected == null || (other.connected != null && !other.connected)) {
+            this.connected = other.connected;
+        }
+        if (this.ping == null || (other.ping != null && other.ping > this.ping)) {
+            this.ping = other.ping;
+        }
+        if (this.sizeBytes == null || (other.sizeBytes != null && other.sizeBytes > this.sizeBytes)) {
+            this.sizeBytes = other.sizeBytes;
+        }
+        return this;
     }
 
 }

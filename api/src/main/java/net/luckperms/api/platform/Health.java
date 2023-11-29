@@ -23,55 +23,29 @@
  *  SOFTWARE.
  */
 
-package me.lucko.luckperms.standalone.app.integration;
-
-import com.google.gson.Gson;
+package net.luckperms.api.platform;
 
 import java.util.Map;
 
 /**
- * An interface able to provide information about the application/plugin health.
+ * Represents the "health" status (healthcheck) of a LuckPerms implementation.
+ *
+ * @since 5.5
  */
-public interface HealthReporter {
+public interface Health {
 
     /**
-     * Polls the current health status.
+     * Gets if LuckPerms is healthy.
      *
-     * @return the health status
+     * @return if LuckPerms is healthy
      */
-    Health poll();
+    boolean isHealthy();
 
-    final class Health {
-        private static final Gson GSON = new Gson();
-
-        private final boolean up;
-        private final Map<String, String> details;
-
-        Health(boolean up, Map<String, String> details) {
-            this.up = up;
-            this.details = details;
-        }
-
-        public boolean isUp() {
-            return this.up;
-        }
-
-        public Map<String, String> details() {
-            return this.details;
-        }
-
-        @Override
-        public String toString() {
-            return GSON.toJson(this);
-        }
-
-        public static Health up(Map<String, String> details) {
-            return new Health(true, details);
-        }
-
-        public static Health down(Map<String, String> details) {
-            return new Health(false, details);
-        }
-    }
+    /**
+     * Gets extra metadata/details about the healthcheck result.
+     *
+     * @return details about the healthcheck status
+     */
+    Map<String, Object> getDetails();
 
 }
