@@ -110,10 +110,13 @@ public class Storage {
     }
 
     public void init() {
+        while (true) // MultiPaper - retry until success
         try {
             this.implementation.init();
+            return; // MultiPaper - retry until success
         } catch (Exception e) {
-            this.plugin.getLogger().severe("Failed to init storage implementation", e);
+            this.plugin.getLogger().severe("Failed to init storage implementation, retrying in 15 seconds", e); // MultiPaper - retry until success
+            try { Thread.sleep(15000); } catch (InterruptedException ex) { throw new RuntimeException(ex); } // MultiPaper - retry until success
         }
     }
 
