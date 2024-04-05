@@ -23,48 +23,7 @@
  *  SOFTWARE.
  */
 
-package net.luckperms.api.event.sync;
-
-import net.luckperms.api.event.LuckPermsEvent;
-import net.luckperms.api.event.type.Cancellable;
-import net.luckperms.api.event.util.Param;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.UUID;
-
 /**
- * Called after a request for synchronisation has been received via the messaging service,
- * but before it has actually been completed.
- *
- * <p>Note: the generic {@link PreSyncEvent} will also be called for {@link SyncType#FULL full syncs}.</p>
+ * Events relating to the {@link net.luckperms.api.messaging.MessagingService}.
  */
-public interface PreNetworkSyncEvent extends LuckPermsEvent, Cancellable {
-
-    /**
-     * Gets the ID of the sync request
-     *
-     * @return the id of the sync request
-     */
-    @Param(0)
-    @NonNull UUID getSyncId();
-
-    /**
-     * Gets the sync type.
-     *
-     * @return the sync type
-     * @since 5.5
-     */
-    @Param(1)
-    @NonNull SyncType getType();
-
-    /**
-     * Gets the unique id of the specific user that will be synced, if applicable.
-     *
-     * @return the unique id of the specific user
-     * @since 5.5
-     */
-    @Param(2)
-    @Nullable UUID getSpecificUserUniqueId();
-
-}
+package net.luckperms.api.event.messaging;

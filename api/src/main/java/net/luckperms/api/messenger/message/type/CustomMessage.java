@@ -23,48 +23,34 @@
  *  SOFTWARE.
  */
 
-package net.luckperms.api.event.sync;
+package net.luckperms.api.messenger.message.type;
 
-import net.luckperms.api.event.LuckPermsEvent;
-import net.luckperms.api.event.type.Cancellable;
-import net.luckperms.api.event.util.Param;
+import net.luckperms.api.messenger.message.Message;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.UUID;
 
 /**
- * Called after a request for synchronisation has been received via the messaging service,
- * but before it has actually been completed.
+ * Represents a "custom payload" message.
  *
- * <p>Note: the generic {@link PreSyncEvent} will also be called for {@link SyncType#FULL full syncs}.</p>
+ * <p>Used by API consumers to send custom messages between servers.</p>
+ *
+ * @see net.luckperms.api.messaging.MessagingService#sendCustomMessage(String, String)
+ * @see net.luckperms.api.event.messaging.CustomMessageReceiveEvent
+ * @since 5.5
  */
-public interface PreNetworkSyncEvent extends LuckPermsEvent, Cancellable {
+public interface CustomMessage extends Message {
 
     /**
-     * Gets the ID of the sync request
+     * Gets the channel identifier.
      *
-     * @return the id of the sync request
+     * @return the namespace
      */
-    @Param(0)
-    @NonNull UUID getSyncId();
+    @NonNull String getChannelId();
 
     /**
-     * Gets the sync type.
+     * Gets the payload.
      *
-     * @return the sync type
-     * @since 5.5
+     * @return the payload
      */
-    @Param(1)
-    @NonNull SyncType getType();
-
-    /**
-     * Gets the unique id of the specific user that will be synced, if applicable.
-     *
-     * @return the unique id of the specific user
-     * @since 5.5
-     */
-    @Param(2)
-    @Nullable UUID getSpecificUserUniqueId();
+    @NonNull String getPayload();
 
 }

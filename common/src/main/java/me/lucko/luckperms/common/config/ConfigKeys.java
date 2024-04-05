@@ -755,4 +755,15 @@ public final class ConfigKeys {
         return KEYS;
     }
 
+    /**
+     * Check if the value at the given path should be censored in console/log output
+     *
+     * @param path the path
+     * @return true if the value should be censored
+     */
+    public static boolean shouldCensorValue(final String path) {
+        final String lower = path.toLowerCase(Locale.ROOT);
+        return lower.contains("password") || lower.contains("uri");
+    }
+
 }

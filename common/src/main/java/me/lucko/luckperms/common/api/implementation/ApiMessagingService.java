@@ -54,4 +54,11 @@ public class ApiMessagingService implements MessagingService {
         Objects.requireNonNull(user, "user");
         this.handle.pushUserUpdate(ApiUser.cast(user));
     }
+
+    @Override
+    public void sendCustomMessage(@NonNull String channelId, @NonNull String payload) {
+        Objects.requireNonNull(channelId, "channelId");
+        Objects.requireNonNull(payload, "payload");
+        this.handle.pushCustomPayload(channelId, payload);
+    }
 }
